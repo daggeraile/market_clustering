@@ -53,3 +53,11 @@ pypi_test:
 
 pypi:
 	@twine upload dist/* -u $(PYPI_USERNAME)
+
+
+
+run_main:
+	@python market_clustering/main.py
+
+run_app:
+	@streamlit run app.py
