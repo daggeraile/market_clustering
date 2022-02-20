@@ -70,6 +70,7 @@ ohe_cols = []
 for i in temp:
     for j in i:
         ohe_cols.append(j)
+joblib.dump(ohe_cols, f'ohe_cols{source}.joblib')
 
 ohe_df = pd.DataFrame(ohe_df, columns=ohe_cols)
 

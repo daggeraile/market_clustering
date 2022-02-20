@@ -10,7 +10,9 @@ import seaborn as sns
 import plotly.graph_objects as go
 from matplotlib import cm
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import silhouette_score
 # from market_clustering.main import *
+from sklearn.metrics import silhouette_score
 from shap import TreeExplainer, summary_plot
 import io
 import copy
@@ -72,6 +74,8 @@ shap_dict = joblib.load(f'shap_dict_{cluster_choice}{source}.joblib')
 scaled_data = joblib.load(f'scaled_data{source}.joblib')
 final_columns = joblib.load(f'final_columns{source}.joblib')
 cluster_average = joblib.load(f'cluster_average_{cluster_choice}{source}.joblib')
+ohe_cols = joblib.load(f'ohe_cols{source}.joblib')
+
 
 # explaining total contribution to cluster formation
 st.markdown('## Importance of Data Point')
