@@ -2,11 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import joblib
-import shap
-import seaborn as sns
 import plotly.graph_objects as go
 from matplotlib import cm
 from sklearn.preprocessing import MinMaxScaler
