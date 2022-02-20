@@ -13,6 +13,7 @@ joblib
 seaborn
 plotly
 shap
+catboost
 streamlit
 
 # tests/linter
