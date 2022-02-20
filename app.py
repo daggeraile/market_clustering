@@ -10,7 +10,7 @@ import seaborn as sns
 import plotly.graph_objects as go
 from matplotlib import cm
 from sklearn.preprocessing import MinMaxScaler
-from market_clustering.main import *
+# from market_clustering.main import *
 from shap import TreeExplainer, summary_plot
 import io
 import copy
