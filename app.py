@@ -23,11 +23,16 @@ st.markdown("<p style='color:Green; font-size:18px;'>By Lance Ng</p>", unsafe_al
 # uploading of data
 st.markdown('## Upload Data for Clustering')
 st.text_input('Enter URL for Data Upload', value='https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data.csv', disabled=True)
-st.write("""*In the full version of this app, users will be able to upload any datasets of their own,
+st.write("""In the full version of this app, users will be able to upload any datasets of their own,
 as long as they are reasonably cleaned. This app is able to handle numerical, categorical and even datetime features.
-In addition it is also able to handle missing data through imputing. For demonstration purpose, a sample retail dataset has been loaded instead.*""")
+In addition it is also able to handle missing data through imputing. \n\n
+For demonstration purpose, a sample retail dataset with 2240 unique customers has been loaded instead.\
+Displaying first 5 rows of dataset below.""")
 
 source = ""
+
+raw_data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data.csv")
+st.dataframe(raw_data.head())
 
 # option = st.selectbox('As this is a demonstration, please utilise either of below data instead.', ('retail customer data', 'bank customer data'))
 
@@ -38,6 +43,10 @@ source = ""
 
 # selecting clusters
 st.markdown('## Select Number of Clusters')
+st.write("""By choosing the number of clusters beforehand, we let the app handle 
+the segmentation of the dataset into the desired number of clusters. We can then compare the performance 
+of the segmentation model through more details below.""")
+
 cluster_choice = st.slider(
     min_value=3, max_value=7, value=5, label=''
 )

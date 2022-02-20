@@ -14,10 +14,10 @@ from catboost import CatBoostClassifier
 from shap import TreeExplainer, summary_plot
 import joblib
 
-source = "II"
+source = ""
 
-# data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data.csv")
-data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data2.csv")
+data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data.csv")
+# data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data2.csv")
 
 original_columns = data.columns
 
