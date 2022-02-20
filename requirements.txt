@@ -5,9 +5,15 @@ twine
 wheel>=0.29
 
 # data science
-numpy
+numpy==1.19.0
 pandas
 scikit-learn
+matplotlib
+joblib
+seaborn
+plotly
+shap
+streamlit
 
 # tests/linter
 black

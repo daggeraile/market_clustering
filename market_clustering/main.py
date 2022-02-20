@@ -15,10 +15,10 @@ from catboost import CatBoostClassifier
 from shap import TreeExplainer, summary_plot
 import joblib
 
+source = "II"
+
 # data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data.csv")
 data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data2.csv")
-
-source = 'II'
 
 original_columns = data.columns
 
@@ -90,69 +90,70 @@ data.set_index(data.columns[0], inplace=True)
 
 # storing original column with names
 final_columns = data.columns
+joblib.dump(final_columns, f'final_columns{source}.joblib')
 
-# scaling data with robust scaler
-scaler = RobustScaler()
-scaled_data = scaler.fit_transform(data)
-scaled_data = pd.DataFrame(scaled_data, columns=final_columns)
+# # scaling data with robust scaler
+# scaler = RobustScaler()
+# scaled_data = scaler.fit_transform(data)
+# scaled_data = pd.DataFrame(scaled_data, columns=final_columns)
 
-if __name__=="__main__":
-    joblib.dump(scaled_data, f'scaled_data{source}.joblib')
-
-
-    # performing TSNE to obtain 3 axes
-    tsne = TSNE(n_components=3, verbose=1, init='pca', learning_rate='auto', random_state=42)
-    axis = tsne.fit_transform(scaled_data)
-    axis = pd.DataFrame(axis, columns=['x', 'y', 'z'])
-
-    #####################
-    #Start of iterations#
-    #####################
-
-    # iterating from 3 to 8 clusters
-    for iteration in range(3, 8):
-
-        # K-means clustering
-        n_clusters = iteration
-        model = KMeans(n_clusters=n_clusters)
-        axis['cluster'] = model.fit_predict(axis)
-        axis['cluster'] = axis['cluster'].apply(lambda x: x+1)
-        joblib.dump(axis, f'axis_{iteration}{source}.joblib')
-
-        # Create cluster_average dataframe
-        axis['ID'] = data.index
-        axis.set_index('ID', inplace=True)
-        cluster_average = data.join(axis['cluster']).groupby('cluster').agg('mean')
-        size_df = pd.DataFrame(data.join(axis['cluster']).value_counts('cluster').sort_index(), columns=['size'])
-        cluster_average['Size'] = size_df
-        cluster_average = cluster_average.T
-        cluster_average = cluster_average.round(2)
-        joblib.dump(cluster_average, f'cluster_average_{iteration}{source}.joblib')
+# if __name__=="__main__":
+#     joblib.dump(scaled_data, f'scaled_data{source}.joblib')
 
 
+#     # performing TSNE to obtain 3 axes
+#     tsne = TSNE(n_components=3, verbose=1, init='pca', learning_rate='auto', random_state=42)
+#     axis = tsne.fit_transform(scaled_data)
+#     axis = pd.DataFrame(axis, columns=['x', 'y', 'z'])
 
-        # converting silhouette score to layman score
-        silhouette = silhouette_score(axis[['x','y','z']], axis['cluster'])
-        cluster_score = round(silhouette*100)
-        cluster_score
+#     #####################
+#     #Start of iterations#
+#     #####################
+
+#     # iterating from 3 to 8 clusters
+#     for iteration in range(3, 8):
+
+#         # K-means clustering
+#         n_clusters = iteration
+#         model = KMeans(n_clusters=n_clusters)
+#         axis['cluster'] = model.fit_predict(axis)
+#         axis['cluster'] = axis['cluster'].apply(lambda x: x+1)
+#         joblib.dump(axis, f'axis_{iteration}{source}.joblib')
+
+#         # Create cluster_average dataframe
+#         axis['ID'] = data.index
+#         axis.set_index('ID', inplace=True)
+#         cluster_average = data.join(axis['cluster']).groupby('cluster').agg('mean')
+#         size_df = pd.DataFrame(data.join(axis['cluster']).value_counts('cluster').sort_index(), columns=['size'])
+#         cluster_average['Size'] = size_df
+#         cluster_average = cluster_average.T
+#         cluster_average = cluster_average.round(2)
+#         joblib.dump(cluster_average, f'cluster_average_{iteration}{source}.joblib')
+
+
+
+#         # converting silhouette score to layman score
+#         silhouette = silhouette_score(axis[['x','y','z']], axis['cluster'])
+#         cluster_score = round(silhouette*100)
+#         cluster_score
         
-        # training catboostclassifier for model explanation
-        model = CatBoostClassifier()
-        model.fit(scaled_data, axis['cluster'])
-        joblib.dump(model, f'cat_model_{iteration}{source}.joblib')
+#         # training catboostclassifier for model explanation
+#         model = CatBoostClassifier()
+#         model.fit(scaled_data, axis['cluster'])
+#         joblib.dump(model, f'cat_model_{iteration}{source}.joblib')
 
-        # explaining total contribution to cluster formation
-        explainer = TreeExplainer(model)
-        shap_values = explainer.shap_values(scaled_data)
-        summary_plot(shap_values, scaled_data, plot_type='bar', class_names=model.classes_)
+#         # explaining total contribution to cluster formation
+#         explainer = TreeExplainer(model)
+#         shap_values = explainer.shap_values(scaled_data)
+#         summary_plot(shap_values, scaled_data, plot_type='bar', class_names=model.classes_)
 
-        # instantiating a dictionary to hold shap values as dataframe and names of top 5 features 
-        shap_dict = {}
-        for i in range(n_clusters):
+#         # instantiating a dictionary to hold shap values as dataframe and names of top 5 features 
+#         shap_dict = {}
+#         for i in range(n_clusters):
             
-            # storing shap values dataframe for each cluster
-            shap_dict[f'cluster_{i+1}'] = pd.DataFrame(shap_values[i], columns=final_columns)
+#             # storing shap values dataframe for each cluster
+#             shap_dict[f'cluster_{i+1}'] = pd.DataFrame(shap_values[i], columns=final_columns)
 
-            # storing top 5 contributing features for each cluster
-            shap_dict[f'top_{i+1}'] = shap_dict[f'cluster_{i+1}'].abs().sum().sort_values(ascending=False)[:5].index.values
-            joblib.dump(shap_dict, f'shap_dict_{iteration}{source}.joblib')
+#             # storing top 5 contributing features for each cluster
+#             shap_dict[f'top_{i+1}'] = shap_dict[f'cluster_{i+1}'].abs().sum().sort_values(ascending=False)[:5].index.values
+#             joblib.dump(shap_dict, f'shap_dict_{iteration}{source}.joblib')

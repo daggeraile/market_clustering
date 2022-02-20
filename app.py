@@ -17,10 +17,22 @@ import copy
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
 st.title('Market Clustering')
+st.markdown("<p style='color:Green; font-size:18px;'>By Lance Ng</p>", unsafe_allow_html=True)
 
-# @st.cache(allow_output_mutation=True)
-# def display_data(url):
-#     return pd.read_csv(url)
+
+# uploading of data
+st.markdown('## Upload Data for Clustering')
+st.text_input('Enter URL for Data Upload', value='https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data.csv', disabled=True)
+st.write("""*In the full version of this app, users will be able to upload any datasets of their own,
+as long as they are reasonably cleaned. This app is able to handle numerical, categorical and even datetime features.
+In addition it is also able to handle missing data through imputing.*""")
+
+option = st.selectbox('As this is a demonstration, please utilise either of below data instead.', ('retail customer data', 'bank customer data'))
+
+if option == 'retail customer data':
+    source = ""
+else:
+    source = "II"
 
 # selecting clusters
 st.markdown('## Select Number of Clusters')
@@ -36,15 +48,17 @@ axis = joblib.load(f'axis_{cluster_choice}{source}.joblib')
 silhouette = silhouette_score(axis[['x','y','z']], axis['cluster'])
 cluster_score = round(silhouette*100)
 
-st.markdown(f'## Market Segmentation Score: {cluster_score}')
+st.markdown(f'### Market Segmentation Score: {cluster_score}')
 st.progress(cluster_score)
-st.write("This metric measures the quality of clusters formed. Higher scores represents clearer segregations between the clusters")
+st.write("""This metric measures the quality of clusters formed. Higher scores represents clearer segregations between the clusters.
+Explore various number of clusters with the bar above and see how it affects the score""")
 
 # showing plotly output
 st.markdown('## Displaying Clusters')
+st.write("""As we live in a 3-dimensional world, the various columns in the dataset has been compressed into three axes for visualization purpose.
+Each axis consists of information captured from the various columns, and as a whole represents how the datapoints will have been clustered in a multi-dimensional space.""")
 fig = px.scatter_3d(axis, x='x', y='y', z='z', color='cluster', opacity=0.7, width=800, height=800)
 st.plotly_chart(fig, use_container_width=True)
-
 
 
 st.write('\n')
@@ -56,6 +70,7 @@ st.write('\n')
 model = joblib.load(f'cat_model_{cluster_choice}{source}.joblib')
 shap_dict = joblib.load(f'shap_dict_{cluster_choice}{source}.joblib')
 scaled_data = joblib.load(f'scaled_data{source}.joblib')
+final_columns = joblib.load(f'final_columns{source}.joblib')
 cluster_average = joblib.load(f'cluster_average_{cluster_choice}{source}.joblib')
 
 # explaining total contribution to cluster formation
@@ -86,11 +101,25 @@ temp = temp.sort_values(ascending=False)
 default_features = list(temp.index[:5])
 selected_features = st.multiselect(label='Please select the features you want to include in the summary', options=final_columns, default=default_features)
 
+st.write('\n')
+st.write('\n')
+st.write('\n')
+
 # displaying cluster_average table with size and selected features
+st.write("""Based on the features you have selected above, we have generated a summary table of the average values in each cluster for easy comparison.
+green and red highlights represents highest and lowest averages in each selected feature.""")
 display_features = ['Size'] + selected_features
 st.dataframe(cluster_average.loc[display_features].style.highlight_max(axis=1, color='green').highlight_min(axis=1, color='red').format("{:.2f}"))
 
+st.write('\n')
+st.write('\n')
+st.write('\n')
+
 # Displaying overall radar chart based on selected features
+st.write("""You can also compare the clusters through the radar chart below for easy visualization.
+Each spoke of the chart has been scaled to a score of 1-10, to better represent the relative difference between clusters.
+You may click on the cluster legends to toggle it's visibility, give it a try.
+""")
 scaled_average = cluster_average.T.drop(columns='Size')
 random_scaler = MinMaxScaler(feature_range=(1,10))
 scaled_average = random_scaler.fit_transform(scaled_average)
@@ -128,7 +157,6 @@ st.plotly_chart(fig)
 st.write('\n')
 st.write('\n')
 st.write('\n')
-
 
 
 st.markdown('## Cluster Summary')
