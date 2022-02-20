@@ -25,14 +25,16 @@ st.markdown('## Upload Data for Clustering')
 st.text_input('Enter URL for Data Upload', value='https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data.csv', disabled=True)
 st.write("""*In the full version of this app, users will be able to upload any datasets of their own,
 as long as they are reasonably cleaned. This app is able to handle numerical, categorical and even datetime features.
-In addition it is also able to handle missing data through imputing.*""")
+In addition it is also able to handle missing data through imputing. For demonstration purpose, a sample retail dataset has been loaded instead.*""")
 
-option = st.selectbox('As this is a demonstration, please utilise either of below data instead.', ('retail customer data', 'bank customer data'))
+source = ""
 
-if option == 'retail customer data':
-    source = ""
-else:
-    source = "II"
+# option = st.selectbox('As this is a demonstration, please utilise either of below data instead.', ('retail customer data', 'bank customer data'))
+
+# if option == 'retail customer data':
+#     source = ""
+# else:
+#     source = "II"
 
 # selecting clusters
 st.markdown('## Select Number of Clusters')
