@@ -15,7 +15,11 @@ from catboost import CatBoostClassifier
 from shap import TreeExplainer, summary_plot
 import joblib
 
-data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data.csv")
+# data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data.csv")
+data = pd.read_csv("https://raw.githubusercontent.com/daggeraile/market_clustering/master/raw_data/data2.csv")
+
+source = 'II'
+
 original_columns = data.columns
 
 # imputing missing data
@@ -93,7 +97,7 @@ scaled_data = scaler.fit_transform(data)
 scaled_data = pd.DataFrame(scaled_data, columns=final_columns)
 
 if __name__=="__main__":
-    joblib.dump(scaled_data, 'scaled_data.joblib')
+    joblib.dump(scaled_data, f'scaled_data{source}.joblib')
 
 
     # performing TSNE to obtain 3 axes
@@ -113,7 +117,7 @@ if __name__=="__main__":
         model = KMeans(n_clusters=n_clusters)
         axis['cluster'] = model.fit_predict(axis)
         axis['cluster'] = axis['cluster'].apply(lambda x: x+1)
-        joblib.dump(axis, f'axis_{iteration}.joblib')
+        joblib.dump(axis, f'axis_{iteration}{source}.joblib')
 
         # Create cluster_average dataframe
         axis['ID'] = data.index
@@ -123,7 +127,7 @@ if __name__=="__main__":
         cluster_average['Size'] = size_df
         cluster_average = cluster_average.T
         cluster_average = cluster_average.round(2)
-        joblib.dump(cluster_average, f'cluster_average_{iteration}.joblib')
+        joblib.dump(cluster_average, f'cluster_average_{iteration}{source}.joblib')
 
 
 
@@ -135,7 +139,7 @@ if __name__=="__main__":
         # training catboostclassifier for model explanation
         model = CatBoostClassifier()
         model.fit(scaled_data, axis['cluster'])
-        joblib.dump(model, f'cat_model_{iteration}.joblib')
+        joblib.dump(model, f'cat_model_{iteration}{source}.joblib')
 
         # explaining total contribution to cluster formation
         explainer = TreeExplainer(model)
@@ -151,4 +155,4 @@ if __name__=="__main__":
 
             # storing top 5 contributing features for each cluster
             shap_dict[f'top_{i+1}'] = shap_dict[f'cluster_{i+1}'].abs().sum().sort_values(ascending=False)[:5].index.values
-            joblib.dump(shap_dict, f'shap_dict_{iteration}.joblib')
+            joblib.dump(shap_dict, f'shap_dict_{iteration}{source}.joblib')

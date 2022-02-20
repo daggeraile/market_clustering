@@ -29,7 +29,7 @@ cluster_choice = st.slider(
 )
 
 # loading axis from joblib
-axis = joblib.load(f'axis_{cluster_choice}.joblib')
+axis = joblib.load(f'axis_{cluster_choice}{source}.joblib')
 
 
 # Converting silhouette score to layman score
@@ -53,10 +53,10 @@ st.write('\n')
 
 
 # loading data from joblib
-model = joblib.load(f'cat_model_{cluster_choice}.joblib')
-shap_dict = joblib.load(f'shap_dict_{cluster_choice}.joblib')
-scaled_data = joblib.load(f'scaled_data.joblib')
-cluster_average = joblib.load(f'cluster_average_{cluster_choice}.joblib')
+model = joblib.load(f'cat_model_{cluster_choice}{source}.joblib')
+shap_dict = joblib.load(f'shap_dict_{cluster_choice}{source}.joblib')
+scaled_data = joblib.load(f'scaled_data{source}.joblib')
+cluster_average = joblib.load(f'cluster_average_{cluster_choice}{source}.joblib')
 
 # explaining total contribution to cluster formation
 st.markdown('## Importance of Data Point')
