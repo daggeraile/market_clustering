@@ -1,74 +1,24 @@
-# Data analysis
-- Document here the project: market_clustering
-- Description: Project Description
-- Data Source:
-- Type of analysis:
+# Market Clustering - Tool for Marketers
+An automated clustering tool that converts customer database from spreadsheets to meaningful customer clusters.
 
-Please document the project the better you can.
+To see the app in deployment, please visit https://market-clustering.herokuapp.com/
+Kindly note that the app may take several minutes to load in full.
+## About Market Clustering
+This tool was built for marketers to uncover hidden customer segments within their customer database.
+With the use of boosted tree model and SHAP explainer tool, we demystify unsupervised machine learning model.
+The resulting customer segments can be broken down into it's key differentiating attributes.
 
-# Startup the project
+## Data Input
+The model is built to take in a wide range of customer attributes as it's input to a reasonable extend.
+It is able to handle missing data, auto-detect datetime features and of course the usual categorical and numerical data.
+After initial data cleaning, the dataset is scaled with RobustScaler so as it drastically improves performance of clustering models.
 
-The initial setup.
+## Unsupervised Learning
+We then reduce the dimension of the dataset by applying the t-distributed stochastic neighbor embedding (T-SNE) principle.
+We employ T-SNE instead of PCA as customer data can possess non-linear relationships.
+The next step is to fit the resultant dataset into K-Means clustering model which groups data points by euclidean distance.
 
-Create virtualenv and install the project:
-```bash
-sudo apt-get install virtualenv python-pip python-dev
-deactivate; virtualenv ~/venv ; source ~/venv/bin/activate ;\
-    pip install pip -U; pip install -r requirements.txt
-```
-
-Unittest test:
-```bash
-make clean install test
-```
-
-Check for market_clustering in gitlab.com/{group}.
-If your project is not set please add it:
-
-- Create a new project on `gitlab.com/{group}/market_clustering`
-- Then populate it:
-
-```bash
-##   e.g. if group is "{group}" and project_name is "market_clustering"
-git remote add origin git@github.com:{group}/market_clustering.git
-git push -u origin master
-git push -u origin --tags
-```
-
-Functionnal test with a script:
-
-```bash
-cd
-mkdir tmp
-cd tmp
-market_clustering-run
-```
-
-# Install
-
-Go to `https://github.com/{group}/market_clustering` to see the project, manage issues,
-setup you ssh public key, ...
-
-Create a python3 virtualenv and activate it:
-
-```bash
-sudo apt-get install virtualenv python-pip python-dev
-deactivate; virtualenv -ppython3 ~/venv ; source ~/venv/bin/activate
-```
-
-Clone the project and install it:
-
-```bash
-git clone git@github.com:{group}/market_clustering.git
-cd market_clustering
-pip install -r requirements.txt
-make clean install test                # install and test
-```
-Functionnal test with a script:
-
-```bash
-cd
-mkdir tmp
-cd tmp
-market_clustering-run
-```
+## Explaining Output
+To ensure the output is explanable, we fit a gradient boosted tree model with the initial dataset & cluster prediction.
+This ensures the tree model learn the importance of each attribute captured by it's various node splits.
+Lastly, by use of SHAP explainer tool, we are able to calculate and visualize the key attributes contributing to each cluster's formation.
